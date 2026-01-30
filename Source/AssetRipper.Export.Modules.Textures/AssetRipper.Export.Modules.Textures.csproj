@@ -13,7 +13,7 @@
 
 	<ItemGroup>
 		<PackageReference Include="AssetRipper.Conversions.FastPng" Version="1.1.0" />
-		<PackageReference Include="AssetRipper.TextureDecoder" Version="2.3.0" />
+		<PackageReference Include="AssetRipper.TextureDecoder" Version="2.5.0" />
 		<PackageReference Include="AssetRipper.Tpk" Version="1.1.0" />
 		<PackageReference Include="Kyaru.Texture2DDecoder" Version="0.17.0" />
 		<PackageReference Include="Kyaru.Texture2DDecoder.Windows" Version="0.1.0" />
