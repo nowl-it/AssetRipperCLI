@@ -1,0 +1,30 @@
+name: Test
+
+on:
+  push:
+    branches: [main, master]
+  pull_request:
+    branches: [main, master]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v5
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v5
+        with:
+          dotnet-version: 9.0.x
+
+      - name: Build Project
+        run: dotnet build
+
+      - name: Run Tests
+        run: dotnet test
+
+      - name: Test CLI Help
+        run: dotnet run --project Source/AssetRipper.GUI.Free/AssetRipper.GUI.Free.csproj -- --help
+
+      - name: Test CLI Version
+        run: dotnet run --project Source/AssetRipper.GUI.Free/AssetRipper.GUI.Free.csproj -- --version

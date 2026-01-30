@@ -1,0 +1,88 @@
+name: Build and Release
+
+on:
+  workflow_dispatch:
+  push:
+    branches: ["master", "main"]
+    tags: ["v*"]
+  pull_request:
+    branches: ["master", "main"]
+
+jobs:
+  build:
+    name: Build ${{ matrix.os }}
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        include:
+          - os: ubuntu-latest
+            rid: linux-x64
+            archive_name: AssetRipper_linux_x64.zip
+          - os: windows-latest
+            rid: win-x64
+            archive_name: AssetRipper_win_x64.zip
+          - os: macos-latest
+            rid: osx-x64
+            archive_name: AssetRipper_macos_x64.zip
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: 9.0.x
+
+      - name: Install dependencies (Linux)
+        if: matrix.os == 'ubuntu-latest'
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y clang zlib1g-dev
+
+      - name: Clean artifacts
+        run: dotnet clean
+
+      - name: Publish
+        run: |
+          dotnet publish Source/AssetRipper.GUI.Free/AssetRipper.GUI.Free.csproj -c Release -r ${{ matrix.rid }} --self-contained true -o ./publish
+
+      - name: Archive Production Artifacts (Windows)
+        if: matrix.os == 'windows-latest'
+        run: |
+          Compress-Archive -Path ./publish/* -DestinationPath ./${{ matrix.archive_name }}
+
+      - name: Archive Production Artifacts (Unix)
+        if: matrix.os != 'windows-latest'
+        run: |
+          cd publish
+          zip -r ../${{ matrix.archive_name }} .
+
+      - name: Upload Artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: ${{ matrix.rid }}-artifact
+          path: ./${{ matrix.archive_name }}
+
+  release:
+    name: Create Release
+    needs: build
+    if: startsWith(github.ref, 'refs/tags/v')
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - name: Download all artifacts
+        uses: actions/download-artifact@v4
+        with:
+          path: ./artifacts
+          pattern: "*-artifact"
+          merge-multiple: true
+
+      - name: Display structure of downloaded files
+        run: ls -R ./artifacts
+
+      - name: Create Release
+        uses: softprops/action-gh-release@v2
+        with:
+          files: ./artifacts/*.zip
+          generate_release_notes: true
