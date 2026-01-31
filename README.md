@@ -30,19 +30,23 @@ For command-line automation and scripting, use the `--cli` flag:
 AssetRipper --cli -i "/path/to/game" -o "/path/to/output"
 
 # With custom settings
-AssetRipper --cli -i "/path/to/game" -o "/path/to/output" --export-mode Unity --ignore-streaming-assets
+AssetRipper --cli -i "/path/to/game" -o "/path/to/output" --mode Unity --ignore-streaming-assets
 ```
 
 ### CLI Options
 
-- `-i, --input` - Path to Unity game folder or file (required)
+- `-i, --input` - Path to Unity game files or directory to load (required)
 - `-o, --output` - Output directory for exported assets (required)
-- `--export-mode` - Export format: `Unity` (editable project) or `Primary` (raw assets)
+- `-m, --mode` - Export format: `Unity` (editable project) or `Primary` (raw assets)
 - `--script-content-level` - Script export detail: `Level0` (full), `Level1` (stubs), `Level2` (minimal)
 - `--ignore-streaming-assets` - Skip StreamingAssets folder
 - `--disable-script-import` - Don't import script files
-- `--log-level` - Logging verbosity: `Verbose`, `Info`, `Warning`, `Error`
-- `--quiet` - Suppress all console output
+- `--publicize-assemblies` - Make internal types public in exported assemblies
+- `-l, --language` - Language code for localization (e.g., en_US, ja)
+- `--log` - Enable logging to file (default: true)
+- `--log-path` - Custom log file path (default: auto-generated)
+- `--create-subfolder` - Create a timestamped subfolder in the output directory
+- `--save-settings` - Save the provided settings as defaults for future runs
 
 For complete CLI documentation, see [CLI_GUIDE.md](docs/CLI_GUIDE.md) or run:
 

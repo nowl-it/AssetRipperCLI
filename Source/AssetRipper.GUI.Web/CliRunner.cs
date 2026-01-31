@@ -25,7 +25,9 @@ internal static class CliRunner
 		Logger.LogSystemInformation("AssetRipper CLI");
 
 		// Load settings
-		LibraryConfiguration settings = LoadSettings(args);
+		LibraryConfiguration settings = GameFileLoader.Settings;
+		ApplyCliSettings(settings, args);
+		
 		Localization.LoadLanguage(settings.LanguageCode);
 
 		// Set export handler
@@ -134,15 +136,8 @@ internal static class CliRunner
 		Logger.Info(LogCategory.General, "=== COMPLETED ===");
 	}
 
-	private static LibraryConfiguration LoadSettings(CliArguments args)
+	private static void ApplyCliSettings(LibraryConfiguration settings, CliArguments args)
 	{
-		LibraryConfiguration settings = new();
-
-		// Load from default path first
-		settings.LoadFromDefaultPath();
-
-		// Override with CLI arguments
-
 		// Handle DisableScriptImport first (it affects ScriptContentLevel)
 		if (args.DisableScriptImport.HasValue && args.DisableScriptImport.Value)
 		{
@@ -181,7 +176,5 @@ internal static class CliRunner
 			settings.SaveToDefaultPath();
 			Logger.Info(LogCategory.General, "Settings saved to default path");
 		}
-
-		return settings;
 	}
 }
