@@ -58,7 +58,7 @@ jobs:
           zip -r ../${{ matrix.archive_name }} .
 
       - name: Upload Artifact
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v6
         with:
           name: ${{ matrix.rid }}-artifact
           path: ./${{ matrix.archive_name }}
